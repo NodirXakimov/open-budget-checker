@@ -1,0 +1,97 @@
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:system-ui,-apple-system,Segoe UI,Roboto;
+}
+
+body{
+background:#f4f6fb;
+color:#1f2937;
+padding:20px;
+}
+
+.app{
+max-width:900px;
+margin:auto;
+}
+
+header{
+margin-bottom:20px;
+}
+
+h1{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.stats{
+display:flex;
+gap:20px;
+font-size:14px;
+color:#6b7280;
+}
+
+.searchBox{
+margin-bottom:15px;
+}
+
+.searchBox input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid #d1d5db;
+font-size:16px;
+transition:0.2s;
+}
+
+.searchBox input:focus{
+border-color:#2563eb;
+outline:none;
+box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.tableWrapper{
+background:white;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 6px 20px rgba(0,0,0,0.06);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:#f9fafb;
+}
+
+th,td{
+padding:14px;
+text-align:left;
+border-bottom:1px solid #eee;
+}
+
+tbody tr:hover{
+background:#f8fafc;
+}
+
+.highlight{
+background:#fde68a;
+padding:2px 3px;
+border-radius:3px;
+}
+
+@media(max-width:600px){
+
+th:nth-child(1),
+td:nth-child(1){
+display:none;
+}
+
+h1{
+font-size:20px;
+}
+
+}
