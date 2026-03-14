@@ -1,54 +1,54 @@
 <!DOCTYPE html>
 <html lang="uz">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telefon Raqam Tekshirish</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telefon Raqam Tekshirish</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
 
-<body>
+  <body>
 
-  <div class="app">
+    <div class="app">
 
-    <header>
-      <h1>📞 Телефон рақамлар</h1>
-      <h2>(Гулистон МФЙ)</h2>
+      <header>
+        <h1>📞 Телефон рақамлар</h1>
+        <h2>(Гулистон МФЙ)</h2>
 
-      <div class="stats">
-        <span id="totalCount"></span>
-        <span id="resultCount"></span>
+        <div class="stats">
+          <span id="totalCount"></span>
+          <span id="resultCount"></span>
+        </div>
+
+      </header>
+
+      <div class="searchBox">
+        <input id="searchInput" placeholder="Телефон рақам бўйича қидириш..." />
       </div>
 
-    </header>
+      <div class="tableWrapper">
 
-    <div class="searchBox">
-      <input id="searchInput" placeholder="Телефон рақам бўйича қидириш..." />
-    </div>
+        <table>
 
-    <div class="tableWrapper">
+          <thead>
+            <tr>
+              <th>T/R</th>
+              <th>Телефон рақам</th>
+              <th>Сана</th>
+            </tr>
+          </thead>
 
-      <table>
+          <tbody id="tableBody"></tbody>
 
-        <thead>
-          <tr>
-            <th>T/R</th>
-            <th>Телефон рақам</th>
-            <th>Сана</th>
-          </tr>
-        </thead>
+        </table>
 
-        <tbody id="tableBody"></tbody>
-
-      </table>
+      </div>
 
     </div>
 
-  </div>
+    <script src="app2.js?v=5.0"></script>
 
-  <script src="app.js?v=5.0"></script>
-
-</body>
+  </body>
 
 </html>
