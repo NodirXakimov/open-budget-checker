@@ -1,48 +1,47 @@
 import fs from "fs"
 
-const base = "https://openbudget.uz/api/v2/info/votes/69b5032190779305e2b90893"
+const base = "https://openbudget.uz/api/v2/info/votes/69b50f003d01cb2096d30d59"
 
-const headers = {
-  "Accept": "application/json",
-  "User-Agent": "Mozilla/5.0",
-  "Referer": "https://openbudget.uz/"
-}
+async function getAll(){
 
-async function getAll() {
+  let all=[]
 
-  // first request to get total pages
-  const firstRes = await fetch(`${base}?page=1`, { headers })
-  const first = await firstRes.json()
+  const firstRes = await fetch(`${base}?page=1`,{
+    headers:{
+      "Accept":"application/json",
+      "User-Agent":"Mozilla/5.0",
+      "Referer":"https://openbudget.uz/"
+    }
+  })
+
+  const firstText = await firstRes.text()
+  const first = JSON.parse(firstText)
+
+  all.push(...first.content)
 
   const totalPages = first.totalPages
-  console.log("Total pages:", totalPages)
 
-  let all = [...first.content]
+  for(let page=2; page<=totalPages; page++){
 
-  // create requests for remaining pages
-  const requests = []
+    const res = await fetch(`${base}?page=${page}`)
+    const text = await res.text()
 
-  for (let page = 2; page <= totalPages; page++) {
+    if(!text){
+      console.log("Empty page",page)
+      continue
+    }
 
-    requests.push(
-      fetch(`${base}?page=${page}`, { headers })
-        .then(r => r.json())
-        .then(d => d.content)
-        .catch(() => [])
-    )
+    const data = JSON.parse(text)
+
+    all.push(...data.content)
+
+    console.log(`Page ${page}/${totalPages}`)
 
   }
 
-  // run all requests at once
-  const results = await Promise.all(requests)
+  fs.writeFileSync("votes.json",JSON.stringify(all,null,2))
 
-  results.forEach(arr => {
-    all.push(...arr)
-  })
-
-  fs.writeFileSync("votes.json", JSON.stringify(all, null, 2))
-
-  console.log("Saved votes:", all.length)
+  console.log("Saved",all.length)
 
 }
 
