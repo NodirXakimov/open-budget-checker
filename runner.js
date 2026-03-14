@@ -1,6 +1,6 @@
 import fs from "fs"
 
-const base = "https://openbudget.uz/api/v2/info/votes/69b554072f5aa943b69ccc6f"
+const base = "https://openbudget.uz/api/v2/info/votes/69b562e890779305e2ba5b15"
 
 async function getAll(){
 
@@ -21,7 +21,7 @@ async function getAll(){
 
   const totalPages = first.totalPages
 
-  for(let page=19; page<=totalPages; page++){
+  for(let page=2; page<=totalPages; page++){
 
     const res = await fetch(`${base}?page=${page}`)
     const text = await res.text()
