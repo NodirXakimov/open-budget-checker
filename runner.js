@@ -1,6 +1,6 @@
 import fs from "fs"
 
-const base = "https://openbudget.uz/api/v2/info/votes/69b608762f5aa943b69e7722"
+const base = "https://openbudget.uz/api/v2/info/votes/69b784a690779305e2bf7a37"
 
 async function getAll(){
 
