@@ -32,7 +32,7 @@ function matchKey(phone) {
 // Build map of phones entries for date 2026-03-18 keyed by last 6 normalized digits.
 const phonesDate18 = phones.filter((o) => {
   if (!o || typeof o.voteDate !== 'string') return false;
-  return o.voteDate.startsWith('2026-03-18');
+  return o.voteDate.startsWith('2026-03-18') || o.voteDate.startsWith('2026-03-19');
 });
 
 const phoneMap = new Map();
