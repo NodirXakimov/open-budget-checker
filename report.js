@@ -1,8 +1,7 @@
 const fs = require('fs');
 
-const foreignPath = './foreign.json';
+const reportPath = './report.json';
 const phonesPath = './phones.json';
-const outPath = './foreign-report.txt';
 
 function loadJson(path) {
   try {
@@ -14,7 +13,7 @@ function loadJson(path) {
   }
 }
 
-const foreign = loadJson(foreignPath);
+const reportData = loadJson(reportPath);
 const phones = loadJson(phonesPath);
 
 function normalizePhone(phone) {
@@ -61,10 +60,10 @@ phonesDate18.forEach((o) => {
   phoneMap.get(key).push({ phoneNumber: o.phoneNumber, voteDate: o.voteDate });
 });
 
-const duplicates = getDuplicateForeignPhones(foreign);
+const duplicates = getDuplicateForeignPhones(reportData);
 
 const uniqueForeignByKey = new Map();
-for (const entry of foreign) {
+for (const entry of reportData) {
   const key = normalizePhone(entry.phoneNumber);
   if (!key) continue;
   if (!uniqueForeignByKey.has(key)) {
@@ -90,20 +89,20 @@ for (const entry of uniqueForeigns) {
   }
 }
 
-const total = foreign.length;
+const total = reportData.length;
 const uniqueCount = uniqueForeigns.length;
 const duplicateCount = duplicates.length;
 const foundCount = found.length;
 const notFoundCount = notFound.length;
 
 const lines = [];
-lines.push('Foreign va Phones (2026-03-18) hisobot');
+lines.push('Tashqi va ichki raqamlar hisobot');
 lines.push('Yaratilgan: ' + new Date().toISOString());
 lines.push('');
-lines.push(`Foreign jami yozuvlar: ${total}`);
-lines.push(`Foreign noyob raqamlar (hisobotda ishlatilgan): ${uniqueCount}`);
-lines.push(`Foreign takroriy raqamlar: ${duplicateCount}`);
-lines.push(`Telefonlar jadvalidan topilganlar (2026-03-18): ${foundCount}`);
+lines.push(`Tashqi jami yozuvlar: ${total}`);
+lines.push(`Tashqi noyob raqamlar (hisobotda ishlatilgan): ${uniqueCount}`);
+lines.push(`Tashqi takroriy raqamlar: ${duplicateCount}`);
+lines.push(`Ichki jadvaldan topilganlar (2026-03-18): ${foundCount}`);
 lines.push(`Topilmaganlar: ${notFoundCount}`);
 lines.push('');
 
@@ -139,29 +138,27 @@ if (duplicateCount === 0) {
   });
 }
 
-fs.writeFileSync(outPath, lines.join('\n'), 'utf8');
-
-const htmlOut = './foreign-report.html';
+const htmlOut = './report.html';
 const htmlLines = [];
 htmlLines.push('<!doctype html>');
 htmlLines.push('<html lang="uz">');
 htmlLines.push('<head>');
 htmlLines.push('<meta charset="utf-8">');
 htmlLines.push('<title>Hisobot</title>');
-htmlLines.push('<style>body{font-family:Arial,sans-serif;background:#f5f7fb;color:#111;margin:0;padding:16px;} .card{background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:16px;max-width:1100px;margin:auto;} h1{margin:0 0 8px;font-size:1.35rem;} .meta{margin-top:0;font-size:.92rem;color:#444;} table{width:100%;border-collapse:collapse;margin-top:14px;} th,td{border:1px solid #ddd;padding:8px;text-align:left;} th{background:#f0f4ff;} tr:nth-child(even){background:#fafbff;} .section{margin-top:22px;} .note{margin-top:12px;color:#333;} </style>');
+htmlLines.push('<style>body{font-family:Arial,sans-serif;background:#f5f7fb;color:#111;margin:0;padding:16px;} .card{background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:16px;max-width:1100px;margin:auto;} h1{margin:0 0 8px;font-size:1.35rem;} .meta{margin-top:0;font-size:.92rem;color:#444;} table{width:100%;border-collapse:collapse;margin-top:14px;} th,td{border:1px solid #ddd;padding:8px;text-align:left;} th{background:#f0f4ff;} tr:nth-child(even){background:#fafbff;} .section{margin-top:22px; text-align:center;} .note{margin-top:12px;color:#333;} </style>');
 htmlLines.push('</head>');
 htmlLines.push('<body>');
 htmlLines.push('<div class="card">');
 htmlLines.push('<h1>Hisobot</h1>');
 htmlLines.push(`<div class="meta">Yaratilgan: ${new Date().toISOString()}</div>`);
-htmlLines.push(`<div class="note">Jami: ${total} | Noyob: ${uniqueCount} | Takroriy: ${duplicateCount} | Topilgan: ${foundCount} | Topilmagan: ${notFoundCount}</div>`);
+htmlLines.push(`<div class="note">Jami: ${total} | Noyob: ${uniqueCount} | Takroriy: ${duplicateCount} | Topilganlar: ${foundCount} | Topilmagan: ${notFoundCount}</div>`);
 
-htmlLines.push('<div class="section"><h2>Topilganlar</h2>');
+htmlLines.push('<div class="section"><h2>TOPILGANLAR</h2>');
 if (foundCount === 0) {
   htmlLines.push('<p>Yo‘q</p>');
 } else {
   htmlLines.push('<table>');
-  htmlLines.push('<thead><tr><th>#</th><th>Foreign raqam</th><th>Foreign sanasi</th><th>Phones raqam</th><th>Phones sanasi</th></tr></thead>');
+  htmlLines.push('<thead><tr><th>#</th><th>Tashqi raqam</th><th>Tashqi sanasi</th><th>Ichki raqam</th><th>Ichki sanasi</th></tr></thead>');
   htmlLines.push('<tbody>');
   found.forEach((item, i) => {
     htmlLines.push(`<tr><td>${i+1}</td><td>${item.foreignPhone}</td><td>${item.foreignDate}</td><td>${item.phonesNumber}</td><td>${item.phonesDate}</td></tr>`);
@@ -171,12 +168,12 @@ if (foundCount === 0) {
 }
 htmlLines.push('</div>');
 
-htmlLines.push('<div class="section"><h2>Topilmaganlar</h2>');
+htmlLines.push('<div class="section"><h2>TOPILMAGANLAR</h2>');
 if (notFoundCount === 0) {
   htmlLines.push('<p>Yo‘q</p>');
 } else {
   htmlLines.push('<table>');
-  htmlLines.push('<thead><tr><th>#</th><th>Foreign raqam</th><th>Foreign sanasi</th></tr></thead>');
+  htmlLines.push('<thead><tr><th>#</th><th>Raqam</th><th>Sanasi</th></tr></thead>');
   htmlLines.push('<tbody>');
   notFound.forEach((item, i) => {
     htmlLines.push(`<tr><td>${i+1}</td><td>${item.foreignPhone}</td><td>${item.foreignDate}</td></tr>`);
@@ -186,12 +183,12 @@ if (notFoundCount === 0) {
 }
 htmlLines.push('</div>');
 
-htmlLines.push('<div class="section"><h2>Takroriy yozuvlar (duplicates)</h2>');
+htmlLines.push('<div class="section"><h2>TAKRORIY RAQAMLAR</h2>');
 if (duplicateCount === 0) {
   htmlLines.push('<p>Yo‘q</p>');
 } else {
   htmlLines.push('<table>');
-  htmlLines.push('<thead><tr><th>#</th><th>Foreign raqam</th></tr></thead>');
+  htmlLines.push('<thead><tr><th>#</th><th>Raqam</th></tr></thead>');
   htmlLines.push('<tbody>');
   duplicates.forEach((phone, i) => {
     htmlLines.push(`<tr><td>${i + 1}</td><td>${phone}</td></tr>`);
@@ -206,4 +203,4 @@ htmlLines.push('</body>');
 htmlLines.push('</html>');
 
 fs.writeFileSync(htmlOut, htmlLines.join('\n'), 'utf8');
-console.log(`Report written to ${outPath} and ${htmlOut}. total=${total} unique=${uniqueCount} duplicates=${duplicateCount} found=${foundCount} notFound=${notFoundCount}`);
+console.log(`Report written to ${htmlOut}. total=${total} unique=${uniqueCount} duplicates=${duplicateCount} found=${foundCount} notFound=${notFoundCount}`);
