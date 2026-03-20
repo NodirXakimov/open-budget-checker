@@ -95,7 +95,8 @@ const duplicateCount = duplicates.length;
 const foundCount = found.length;
 const notFoundCount = notFound.length;
 
-const generatedAt = new Date().toLocaleString('uz-UZ', {
+const now = new Date();
+const generatedAt = now.toLocaleString('uz-UZ', {
   year: 'numeric',
   month: '2-digit',
   day: '2-digit',
@@ -103,6 +104,14 @@ const generatedAt = new Date().toLocaleString('uz-UZ', {
   minute: '2-digit',
   second: '2-digit'
 });
+
+const pad = (n) => String(n).padStart(2, '0');
+const fileTime = `${pad(now.getMonth()+1)}_${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}`;
+const reportFolder = './reports';
+if (!fs.existsSync(reportFolder)) {
+  fs.mkdirSync(reportFolder, { recursive: true });
+}
+const htmlOut = `${reportFolder}/report_${fileTime}.html`;
 
 const lines = [];
 lines.push('Tashqi va ichki raqamlar hisobot');
@@ -147,7 +156,6 @@ if (duplicateCount === 0) {
   });
 }
 
-const htmlOut = './report.html';
 const htmlLines = [];
 htmlLines.push('<!doctype html>');
 htmlLines.push('<html lang="uz">');
