@@ -29,6 +29,22 @@ function matchKey(phone) {
   return d.slice(-6);
 }
 
+function getDuplicateForeignPhones(entries) {
+  const counts = new Map();
+  const duplicates = new Set();
+
+  for (const entry of entries) {
+    const key = normalizePhone(entry.phoneNumber);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+    if (counts.get(key) > 1) {
+      duplicates.add(entry.phoneNumber);
+    }
+  }
+
+  return [...duplicates];
+}
+
 // Build map of phones entries for date 2026-03-18 keyed by last 6 normalized digits.
 const phonesDate18 = phones.filter((o) => {
   if (!o || typeof o.voteDate !== 'string') return false;
@@ -45,10 +61,22 @@ phonesDate18.forEach((o) => {
   phoneMap.get(key).push({ phoneNumber: o.phoneNumber, voteDate: o.voteDate });
 });
 
+const duplicates = getDuplicateForeignPhones(foreign);
+
+const uniqueForeignByKey = new Map();
+for (const entry of foreign) {
+  const key = normalizePhone(entry.phoneNumber);
+  if (!key) continue;
+  if (!uniqueForeignByKey.has(key)) {
+    uniqueForeignByKey.set(key, entry);
+  }
+}
+
+const uniqueForeigns = [...uniqueForeignByKey.values()];
 const found = [];
 const notFound = [];
 
-for (const entry of foreign) {
+for (const entry of uniqueForeigns) {
   const key = matchKey(entry.phoneNumber);
   if (!key) continue;
 
@@ -63,6 +91,8 @@ for (const entry of foreign) {
 }
 
 const total = foreign.length;
+const uniqueCount = uniqueForeigns.length;
+const duplicateCount = duplicates.length;
 const foundCount = found.length;
 const notFoundCount = notFound.length;
 
@@ -71,6 +101,8 @@ lines.push('Foreign va Phones (2026-03-18) hisobot');
 lines.push('Yaratilgan: ' + new Date().toISOString());
 lines.push('');
 lines.push(`Foreign jami yozuvlar: ${total}`);
+lines.push(`Foreign noyob raqamlar (hisobotda ishlatilgan): ${uniqueCount}`);
+lines.push(`Foreign takroriy raqamlar: ${duplicateCount}`);
 lines.push(`Telefonlar jadvalidan topilganlar (2026-03-18): ${foundCount}`);
 lines.push(`Topilmaganlar: ${notFoundCount}`);
 lines.push('');
@@ -96,6 +128,17 @@ if (notFoundCount === 0) {
   });
 }
 
+lines.push('');
+lines.push('=== Takroriy (duplicates) ===');
+if (duplicateCount === 0) {
+  lines.push('Yo‘q');
+} else {
+  lines.push('foreignPhone');
+  duplicates.forEach((phone) => {
+    lines.push(phone);
+  });
+}
+
 fs.writeFileSync(outPath, lines.join('\n'), 'utf8');
 
 const htmlOut = './foreign-report.html';
@@ -111,7 +154,7 @@ htmlLines.push('<body>');
 htmlLines.push('<div class="card">');
 htmlLines.push('<h1>Hisobot</h1>');
 htmlLines.push(`<div class="meta">Yaratilgan: ${new Date().toISOString()}</div>`);
-htmlLines.push(`<div class="note">Jami: ${total} | Topilgan: ${foundCount} | Topilmagan: ${notFoundCount}</div>`);
+htmlLines.push(`<div class="note">Jami: ${total} | Noyob: ${uniqueCount} | Takroriy: ${duplicateCount} | Topilgan: ${foundCount} | Topilmagan: ${notFoundCount}</div>`);
 
 htmlLines.push('<div class="section"><h2>Topilganlar</h2>');
 if (foundCount === 0) {
@@ -142,9 +185,25 @@ if (notFoundCount === 0) {
   htmlLines.push('</table>');
 }
 htmlLines.push('</div>');
+
+htmlLines.push('<div class="section"><h2>Takroriy yozuvlar (duplicates)</h2>');
+if (duplicateCount === 0) {
+  htmlLines.push('<p>Yo‘q</p>');
+} else {
+  htmlLines.push('<table>');
+  htmlLines.push('<thead><tr><th>#</th><th>Foreign raqam</th></tr></thead>');
+  htmlLines.push('<tbody>');
+  duplicates.forEach((phone, i) => {
+    htmlLines.push(`<tr><td>${i + 1}</td><td>${phone}</td></tr>`);
+  });
+  htmlLines.push('</tbody>');
+  htmlLines.push('</table>');
+}
+htmlLines.push('</div>');
+
 htmlLines.push('</div>');
 htmlLines.push('</body>');
 htmlLines.push('</html>');
 
 fs.writeFileSync(htmlOut, htmlLines.join('\n'), 'utf8');
-console.log(`Report written to ${outPath} and ${htmlOut}. total=${total} found=${foundCount} notFound=${notFoundCount}`);
+console.log(`Report written to ${outPath} and ${htmlOut}. total=${total} unique=${uniqueCount} duplicates=${duplicateCount} found=${foundCount} notFound=${notFoundCount}`);
